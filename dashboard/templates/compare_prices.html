@@ -1,0 +1,22 @@
+<h2>Price Comparison for "{{ product_name }}"</h2>
+
+{% if prices %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Website</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for site, price in prices.items %}
+            <tr>
+                <td>{{ site }}</td>
+                <td>{{ price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No prices found for "{{ product_name }}".</p>
+{% endif %}
