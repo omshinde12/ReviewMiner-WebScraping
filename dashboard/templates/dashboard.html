@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flipkart Reviews Dashboard</title>
+    <title>ReviewMiner WebScraping</title>
     <!-- Add Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -11,7 +11,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Flipkart Dashboard</a>
+            <a class="navbar-brand" href="#">ReviewMiner</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -50,7 +50,7 @@
 
     <!-- Main Content -->
     <div class="container mt-4">
-        <h1 class="text-center">Flipkart Reviews Dashboard</h1>
+        <h1 class="text-center">ReviewMiner WebScraping</h1>
         <!-- Scrape Reviews Form -->
         <form method="POST" class="mb-4">
             {% csrf_token %}
@@ -66,14 +66,14 @@
         </form>
 
         <!-- Compare Prices Form -->
-        <form method="POST" action="{% url 'compare_prices' %}" class="mb-4">
+        <!-- <form method="POST" action="{% url 'compare_prices' %}" class="mb-4">
             {% csrf_token %}
             <div class="mb-3">
                 <label for="product_name" class="form-label">Enter Product Name:</label>
                 <input type="text" name="product_name" class="form-control" required>
             </div>
             <button type="submit" class="btn btn-secondary">Compare Prices</button>
-        </form>
+        </form> -->
 
         <!-- Data Section -->
         {% if data %}
