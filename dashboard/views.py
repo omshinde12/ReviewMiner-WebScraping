@@ -14,6 +14,11 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .utils import fetch_prices
+# from django.contrib.auth.decorators import login_required
+# from .models import UserActivity
+
+# def log_activity(user, action):
+#     UserActivity.objects.create(user=user, action=action)
 
 def dashboard_view(request):
     data_preview = None
@@ -137,6 +142,7 @@ def perform_sentiment_analysis(df):
     labels = preprocess_data(reviews)
     return {"labels": labels}
 
+# @login_required
 def compare_prices_view(request):
     prices = None
     product_name = None
@@ -147,6 +153,18 @@ def compare_prices_view(request):
             prices = fetch_prices(product_name)
 
     return render(request, "compare_prices.html", {"product_name": product_name, "prices": prices})
+
+# @login_required
+# def view_saved_entries(request):
+#     log_activity(request.user, "Viewed saved entries")
+#     entries = ProductData.objects.values('entry_id', 'product_name').distinct()
+#     return render(request, "saved_entries.html", {"entries": entries})
+
+# @login_required
+# def view_history(request):
+#     history = UserActivity.objects.filter(user=request.user).order_by('-timestamp')
+#     return render(request, "history.html", {"history": history})
+
 
 def download_csv_view(request):
     file_path = "dashboard/static/preprocessed_data.csv"

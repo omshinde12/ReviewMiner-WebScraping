@@ -1,22 +1,86 @@
-<h2>Price Comparison for "{{ product_name }}"</h2>
 
-{% if prices %}
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Website</th>
-                <th>Price</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for site, price in prices.items %}
-            <tr>
-                <td>{{ site }}</td>
-                <td>{{ price }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReviewMiner WebScraping</title>
+    <!-- Add Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">ReviewMiner</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'compare_prices' %}">Compare Prices</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/download-csv/">Download CSV</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <span class="navbar-text text-light">Welcome, {{ user.username }}</span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Register</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+<form method="POST" action="{% url 'compare_prices' %}" class="mb-4">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="product_name" class="form-label">Enter Product Name:</label>
+        <input type="text" name="product_name" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-secondary">Compare Prices</button>
+</form>
+
+{% if product_name %}
+    <h2>Price Comparison for "{{ product_name }}"</h2>
+
+    {% if prices %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Website</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for site, price in prices.items %}
+                <tr>
+                    <td>{{ site }}</td>
+                    <td>{{ price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No prices found for "{{ product_name }}".</p>
+    {% endif %}
 {% else %}
-    <p>No prices found for "{{ product_name }}".</p>
+    <p>Please enter a product name to compare prices.</p>
 {% endif %}
