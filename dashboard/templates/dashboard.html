@@ -1,136 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ReviewMiner WebScraping</title>
-    <!-- Add Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+
+  
+    {% include 'navbar.html' %}
+
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">ReviewMiner</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'compare_prices' %}">Compare Prices</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/download-csv/">Download CSV</a>
-                    </li>
-                    
-                </ul>
-                <ul class="navbar-nav ms-auto">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <span class="navbar-text text-light">Welcome, {{ user.username }}</span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register' %}">Register</a>
-                        </li>
-                    {% endif %}
-                </ul>
+    <div class="main">
+        
+        <div class="content">
+            <h1>Extract & Analyze <br><span>Product Reviews</span></h1>
+            <p class="par">Scrape, visualize, and analyze customer reviews with ReviewMiner.</p>
+            <button class="cn"><a href="#">Get Started</a></button>
+            <div class="form">
+                <h2>Scrape Reviews</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="url" name="flipkart_url" placeholder="Enter Flipkart URL" required>
+                    <input type="number" name="num_pages" placeholder="Number of Pages" min="1" required>
+                    <button type="submit" class="btnn">Scrape Now</button>
+                </form>
+                
             </div>
         </div>
-    </nav>
-
-    <!-- Main Content -->
-    <div class="container mt-4">
-        <h1 class="text-center">ReviewMiner WebScraping</h1>
-        <!-- Scrape Reviews Form -->
-        <form method="POST" class="mb-4">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label for="flipkart_url" class="form-label">Enter Flipkart URL:</label>
-                <input type="url" name="flipkart_url" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label for="num_pages" class="form-label">Number of Pages:</label>
-                <input type="number" name="num_pages" class="form-control" value="1" min="1" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Scrape Reviews</button>
-        </form>
-
-        <!-- Compare Prices Form -->
-        <!-- <form method="POST" action="{% url 'compare_prices' %}" class="mb-4">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label for="product_name" class="form-label">Enter Product Name:</label>
-                <input type="text" name="product_name" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-secondary">Compare Prices</button>
-        </form> -->
-
-        <!-- Data Section -->
         {% if data %}
+        <div class="data-preview">
             <h2>Data Preview</h2>
-            <div class="mb-4">
-                {{ data|safe }}
-            </div>
-
+            {{ data|safe }}
+        </div>
+        <div class="graphical-analysis">
             <h2>Graphical Analysis</h2>
-            <div class="row">
-                <div class="col-md-6">
-                    <h3>Ratings Distribution</h3>
-                    <img src="/static/ratings_distribution.png" alt="Ratings Distribution" class="img-fluid">
-                </div>
-                <div class="col-md-6">
-                    <h3>Top Locations with Most Reviews</h3>
-                    <img src="/static/top_locations.png" alt="Top Locations" class="img-fluid">
-                </div>
-            </div>
-            <div class="row mt-4">
-                <div class="col-md-6">
-                    <h3>Word Cloud of Review Texts</h3>
-                    <img src="/static/wordcloud.png" alt="Word Cloud" class="img-fluid">
-                </div>
-                <div class="col-md-6">
-                    <h3>Average Rating by Location</h3>
-                    <img src="/static/avg_rating_by_location.png" alt="Average Rating by Location" class="img-fluid">
-                </div>
-            </div>
-
-            <h2 class="mt-4">Negative Reviews Analysis</h2>
-            <div class="row">
-                <div class="col-md-6">
-                    <h3>Word Cloud of Negative Reviews</h3>
-                    <img src="/static/negative_wordcloud.png" alt="Negative Reviews Word Cloud" class="img-fluid">
-                </div>
-                <div class="col-md-6">
-                    <h3>Top Keywords in Negative Reviews</h3>
-                    <img src="/static/negative_keywords.png" alt="Negative Keywords" class="img-fluid">
-                </div>
-            </div>
-
-            <h3 class="mt-4">Download Options</h3>
-            <ul>
-                <li><a href="/download-csv/">Download Reviews CSV</a></li>
-                <li><a href="/download-image/ratings_distribution.png">Download Ratings Graph</a></li>
-                <li><a href="/download-image/wordcloud.png">Download Word Cloud</a></li>
-                <li><a href="/download-image/top_locations.png">Download Top Locations</a></li>
-                <li><a href="/download-image/avg_rating_by_location.png">Download Avg Rating by Location</a></li>
-                <li><a href="/download-image/negative_wordcloud.png">Download Negative Word Cloud</a></li>
-                <li><a href="/download-image/negative_keywords.png">Download Negative Keywords Graph</a></li>
-            </ul>
+            <img src="{% static 'ratings_distribution.png' %}" alt="Ratings Distribution">
+            <img src="{% static 'top_location.png' %}" alt="Top Locations">
+            <img src="{% static 'wordcloud.png' %}" alt="Word Cloud">
+            <img src="{% static 'avg_rating_by_location.png' %}" alt="avg_rating_by_location">
+        </div>
         {% endif %}
     </div>
-
-    <!-- Add Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
 </body>
 </html>

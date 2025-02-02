@@ -14,6 +14,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .utils import fetch_prices
+from django.conf import settings
+
+
 # from django.contrib.auth.decorators import login_required
 # from .models import UserActivity
 
@@ -55,17 +58,19 @@ def dashboard_view(request):
         finally:
             driver.quit()
 
-        if len(ratings) != len(reviews):
-            print("Mismatch between reviews and ratings lengths")
-        
         df = pd.DataFrame({
             "Review Text": reviews,
-            "Rating": ratings if len(ratings) == len(reviews) else [None] * len(reviews),
-            "Location": locations if len(locations) == len(reviews) else [None] * len(reviews),
+            "Rating": ratings,
+            "Location": locations,
         })
+
+        if df.empty:
+            print("DataFrame is empty! No data to save.")
+            return render(request, "dashboard.html", {"error": "No reviews found."})
 
         csv_path = "dashboard/static/preprocessed_data.csv"
         df.to_csv(csv_path, index=False, encoding="utf-8")
+        print("CSV saved successfully!")
 
         graphs = create_graphs(df)
         sentiment_report = perform_sentiment_analysis(df)
@@ -75,6 +80,7 @@ def dashboard_view(request):
             "data": data_preview,
             "graphs": graphs,
             "sentiment_report": sentiment_report,
+            "MEDIA_URL": settings.MEDIA_URL  # Pass MEDIA_URL for graph paths
         })
 
     return render(request, "dashboard.html", {"data": data_preview})

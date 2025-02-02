@@ -1,0 +1,154 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Main Container */
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 50px 20px;
+}
+
+/* Headings */
+.content h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 15px;
+}
+
+.content h1 span {
+    color: #28a745;
+}
+
+.par {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* Get Started Button */
+.cn {
+    background: #007bff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+.cn a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
+.cn:hover {
+    background: #0056b3;
+}
+
+/* Form Section */
+.form {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 30px auto;
+    text-align: center;
+}
+
+.form h2 {
+    font-size: 1.5rem;
+    color: #007bff;
+    margin-bottom: 15px;
+}
+
+.form input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.btnn {
+    background: #28a745;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+    transition: background 0.3s ease-in-out;
+}
+
+.btnn a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+
+.btnn:hover {
+    background: #218838;
+}
+
+/* Data Preview */
+.data-preview {
+    text-align: center;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 90%;
+    margin: 30px auto;
+}
+
+.data-preview h2 {
+    color: #007bff;
+}
+
+/* Graphical Analysis */
+.graphical-analysis {
+    text-align: center;
+    margin: 30px auto;
+    max-width: 90%;
+}
+
+.graphical-analysis h2 {
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+.graphical-analysis img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .content h1 {
+        font-size: 2rem;
+    }
+
+    .form {
+        max-width: 100%;
+        padding: 20px;
+    }
+
+    .data-preview,
+    .graphical-analysis {
+        max-width: 100%;
+    }
+}

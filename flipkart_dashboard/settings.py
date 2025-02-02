@@ -54,7 +54,9 @@ MIDDLEWARE = [
 ]
 
 LOGIN_URL = '/login/'
-LOGOUT_REDIRECT_URL = '/login/'  # Redirect to login after logout
+LOGOUT_REDIRECT_URL = '/login/' 
+
+ # Redirect to login after logout
 
 ROOT_URLCONF = 'flipkart_dashboard.urls'
 
