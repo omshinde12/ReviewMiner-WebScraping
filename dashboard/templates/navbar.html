@@ -64,6 +64,9 @@
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'compare_prices' %}">Compare Prices</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'reviews_list' %}">reviews_list</a>
+              </li>
               {% if user.is_authenticated %}
               <li class="nav-item">
                 <a class="nav-link" href="#">Welcome, {{ user.username }}</a>

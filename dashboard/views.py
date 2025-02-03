@@ -15,6 +15,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .utils import fetch_prices
 from django.conf import settings
+from .models import ProductReview
 
 
 # from django.contrib.auth.decorators import login_required
@@ -31,30 +32,49 @@ def dashboard_view(request):
         flipkart_url = request.POST.get("flipkart_url")
         num_pages = int(request.POST.get("num_pages", 1))
 
-        driver = webdriver.Chrome()  # Ensure chromedriver is installed and set up
+        driver = webdriver.Chrome()
         reviews, ratings, locations = [], [], []
 
         try:
             for page in range(1, num_pages + 1):
                 page_url = f"{flipkart_url}?page={page}"
                 driver.get(page_url)
-                time.sleep(5)  # Adjust the delay as needed
+                time.sleep(5)
 
                 content = driver.page_source
                 soup = BeautifulSoup(content, "lxml")
 
+                product_name_element = soup.find("div", class_="Vu3-9u eCtPz5")
+                product_name = product_name_element.get_text(strip=True) if product_name_element else "Unknown Product"
+
                 review_containers = soup.find_all("div", class_="col EPCmJX Ma1fCG")
                 for container in review_containers:
                     review_text = container.find("div", class_="ZmyHeo")
-                    reviews.append(review_text.get_text(strip=True) if review_text else "N/A")
+                    review_text = review_text.get_text(strip=True) if review_text else "N/A"
 
                     rating = container.find("div", class_="XQDdHH Ga3i8K")
-                    ratings.append(rating.get_text(strip=True) if rating else "N/A")
+                    rating = rating.get_text(strip=True) if rating else "0.0"
+                    rating = float(rating) if rating.replace(".", "").isdigit() else 0.0
 
                     location = container.find("p", class_="MztJPv")
-                    locations.append(location.get_text(strip=True) if location else "N/A")
+                    location = location.get_text(strip=True) if location else "Unknown"
+
+                    # Save each review only if it does not exist
+                    if not ProductReview.objects.filter(product_name=product_name, review_text=review_text).exists():
+                        ProductReview.objects.create(
+                            product_name=product_name,
+                            review_text=review_text,
+                            rating=rating,
+                            location=location,
+                        )
+
+                    reviews.append(review_text)
+                    ratings.append(rating)
+                    locations.append(location)
+
         except Exception as e:
             print("Error during scraping:", e)
+
         finally:
             driver.quit()
 
@@ -64,13 +84,13 @@ def dashboard_view(request):
             "Location": locations,
         })
 
-        if df.empty:
+        if not df.empty:
+            csv_path = "dashboard/static/preprocessed_data.csv"
+            df.to_csv(csv_path, index=False, encoding="utf-8")
+            print("CSV saved successfully!")
+        else:
             print("DataFrame is empty! No data to save.")
             return render(request, "dashboard.html", {"error": "No reviews found."})
-
-        csv_path = "dashboard/static/preprocessed_data.csv"
-        df.to_csv(csv_path, index=False, encoding="utf-8")
-        print("CSV saved successfully!")
 
         graphs = create_graphs(df)
         sentiment_report = perform_sentiment_analysis(df)
@@ -80,7 +100,7 @@ def dashboard_view(request):
             "data": data_preview,
             "graphs": graphs,
             "sentiment_report": sentiment_report,
-            "MEDIA_URL": settings.MEDIA_URL  # Pass MEDIA_URL for graph paths
+            "MEDIA_URL": settings.MEDIA_URL
         })
 
     return render(request, "dashboard.html", {"data": data_preview})
@@ -263,3 +283,8 @@ def logout_view(request):
     logout(request)
     messages.success(request, "Logged out successfully.")
     return redirect('login')
+
+
+def reviews_list(request):
+    reviews = ProductReview.objects.all()  # Fetch all reviews from the database
+    return render(request, 'reviews_list.html', {'reviews': reviews})
