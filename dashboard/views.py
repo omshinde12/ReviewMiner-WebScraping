@@ -128,25 +128,61 @@ def create_graphs(df):
         plt.savefig(avg_rating_path)
         plt.close()
         graph_paths["avg_rating"] = avg_rating_path
+    
+
+    
+    # Perform sentiment analysis and get counts
+    sentiment_data = perform_sentiment_analysis(df)
+    sentiment_counts = sentiment_data["counts"]
+
+    if sentiment_counts:
+        # Generate a bar chart for sentiment classification
+        plt.figure(figsize=(8, 6))
+        plt.bar(sentiment_counts.keys(), sentiment_counts.values(), color=["green", "red", "blue"])
+        plt.xlabel("Sentiment")
+        plt.ylabel("Count")
+        plt.title("Sentiment Distribution Based on Ratings")
+        plt.xticks(rotation=0)
+
+        sentiment_graph_path = "dashboard/static/sentiment_distribution.png"
+        plt.savefig(sentiment_graph_path)
+        plt.close()
+        graph_paths["sentiment"] = sentiment_graph_path
 
     return graph_paths
+    
 
 def perform_sentiment_analysis(df):
-    reviews = df["Review Text"].tolist()
+    if "Rating" not in df.columns:
+        return {"labels": [], "counts": {"Positive": 0, "Negative": 0, "Neutral": 0}}
 
-    def preprocess_data(reviews):
+    try:
+        # Convert ratings to numeric and drop invalid values
+        df["Rating"] = pd.to_numeric(df["Rating"], errors="coerce")
+        df = df.dropna(subset=["Rating"])
+
         labels = []
-        for review in reviews:
-            if "good" in review.lower() or "excellent" in review.lower():
+        for rating in df["Rating"]:
+            if rating >= 4:  # Ratings 4 & 5 → Positive
                 labels.append("Positive")
-            elif "bad" in review.lower() or "poor" in review.lower():
-                labels.append("Negative")
-            else:
+            elif rating == 3:  # Rating 3 → Neutral
                 labels.append("Neutral")
-        return labels
+            else:  # Ratings 1 & 2 → Negative
+                labels.append("Negative")
 
-    labels = preprocess_data(reviews)
-    return {"labels": labels}
+        # Count occurrences of each sentiment
+        sentiment_counts = {
+            "Positive": labels.count("Positive"),
+            "Negative": labels.count("Negative"),
+            "Neutral": labels.count("Neutral"),
+        }
+
+        return {"labels": labels, "counts": sentiment_counts}
+    
+    except Exception as e:
+        print(f"Error in sentiment analysis: {e}")
+        return {"labels": [], "counts": {"Positive": 0, "Negative": 0, "Neutral": 0}}
+
 
 # @login_required
 def compare_prices_view(request):

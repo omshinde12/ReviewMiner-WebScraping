@@ -11,11 +11,46 @@
     
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <style>
+        /* Custom Blue Navbar */
+        .navbar {
+            background-color: #007bff; /* Blue background */
+        }
+
+        .navbar .navbar-brand {
+            color: white !important; /* White color for the brand text */
+        }
+
+        .navbar .nav-link {
+            color: white !important; /* White color for the navigation links */
+        }
+
+        .navbar .nav-link:hover {
+            color: #f8f9fa !important; /* Light color on hover */
+        }
+
+        .navbar .navbar-toggler-icon {
+            background-color: white; /* White color for the toggler icon */
+        }
+
+        /* Search button color */
+        .navbar .btn-outline-primary {
+            color: white;
+            border-color: white;
+        }
+
+        .navbar .btn-outline-primary:hover {
+            background-color: white;
+            color: #007bff;
+            border-color: white;
+        }
+    </style>
 </head>
 <body>
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">ReviewMiner</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,9 +63,6 @@
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'compare_prices' %}">Compare Prices</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/download-csv/">Download CSV</a>
               </li>
               {% if user.is_authenticated %}
               <li class="nav-item">

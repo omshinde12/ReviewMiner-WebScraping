@@ -5,19 +5,209 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     
-
-  
     {% include 'navbar.html' %}
+    <style>
+        /* Hide the form initially */
+        #scrape-form {
+            display: none;
+        }
+    </style>
 
+    <style>
+        /* General Background Image */
+        body {
+            background-image: url("{% static 'images/background.jpg' %}"); /* Update path as needed */
+            background-size: cover; /* Ensures the image covers the entire screen */
+            background-position: center; /* Keeps the background centered */
+            background-attachment: fixed; /* Keeps the image in place when scrolling */
+            height: 100vh; /* Full height of the screen */
+            margin: 0;
+            padding: 0;
+            background-color: rgba(226, 226, 226, 0.822);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Main Container */
+        .main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 50px 20px;
+            flex: 1;
+        }
+
+        /* Headings */
+        .content h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        .content h1 span {
+            color: #28a745;
+        }
+
+        .par {
+            font-size: 1.2rem;
+            color: #000000;
+            margin-bottom: 20px;
+        }
+
+        /* Get Started Button */
+        .cn {
+            background: #007bff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+
+        .cn a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+        }
+
+        .cn:hover {
+            background: #0056b3;
+        }
+
+        /* Form Section */
+        .form {
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 30px auto;
+            text-align: center;
+        }
+
+        .form h2 {
+            font-size: 1.5rem;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+
+        .form input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .btnn {
+            background: #28a745;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+            transition: background 0.3s ease-in-out;
+        }
+
+        .btnn a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+        }
+
+        .btnn:hover {
+            background: #218838;
+        }
+
+        /* Data Preview */
+        .data-preview {
+            text-align: center;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            margin: 30px auto;
+        }
+
+        .data-preview h2 {
+            color: #007bff;
+        }
+
+        /* Graphical Analysis */
+        .graphical-analysis {
+            text-align: center;
+            margin: 30px auto;
+            max-width: 90%;
+        }
+
+        .graphical-analysis h2 {
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        .graphical-analysis img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            width: 100%;
+            bottom: -250px;
+            margin-top: auto;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: #28a745;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content h1 {
+                font-size: 2rem;
+            }
+
+            .form {
+                max-width: 100%;
+                padding: 20px;
+            }
+
+            .data-preview,
+            .graphical-analysis {
+                max-width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="main">
-        
         <div class="content">
             <h1>Extract & Analyze <br><span>Product Reviews</span></h1>
             <p class="par">Scrape, visualize, and analyze customer reviews with ReviewMiner.</p>
-            <button class="cn"><a href="#">Get Started</a></button>
-            <div class="form">
+            
+            <!-- Get Started button -->
+            <button class="cn" id="get-started-btn">Get Started</button>
+
+            <!-- Scrape Reviews Form (Initially Hidden) -->
+            <div class="form" id="scrape-form">
                 <h2>Scrape Reviews</h2>
                 <form method="POST">
                     {% csrf_token %}
@@ -25,23 +215,53 @@
                     <input type="number" name="num_pages" placeholder="Number of Pages" min="1" required>
                     <button type="submit" class="btnn">Scrape Now</button>
                 </form>
-                
             </div>
         </div>
+
         {% if data %}
         <div class="data-preview">
             <h2>Data Preview</h2>
             {{ data|safe }}
         </div>
+
         <div class="graphical-analysis">
             <h2>Graphical Analysis</h2>
             <img src="{% static 'ratings_distribution.png' %}" alt="Ratings Distribution">
             <img src="{% static 'top_location.png' %}" alt="Top Locations">
             <img src="{% static 'wordcloud.png' %}" alt="Word Cloud">
-            <img src="{% static 'avg_rating_by_location.png' %}" alt="avg_rating_by_location">
+            <img src="{% static 'avg_rating_by_location.png' %}" alt="Average Rating by Location">
+            <img src="{% static 'sentiment_distribution.png' %}" alt="Sentiment Distribution">
         </div>
         {% endif %}
     </div>
+
+    <footer>
+        <p>&copy; 2025 E-xpert Solutions. All rights reserved. <br>
+            <a href="https://e-xpertsol.com/">About Us</a> | <a href="/contact">Contact</a> | <a href="/privacy-policy">Privacy Policy</a>
+        </p>
+        <div>
+            <p><strong>Contact Us:</strong></p>
+            <p>Email: <a href="mailto:omshinde120@gmail.com">omshinde120@gmail.com</a></p>
+            <p>Phone: <a href="tel:+917058416137">7058416137</a></p>
+            <p>Address: 204, Sankalp Building, Above Monginis Shop, Near Apple Hospital, Vishal Nagar, Pimple Nilakh, Pin: 411027</p>
+        </div>
+    </footer>
+
+    <script>
+        // Correctly pass Django authentication status to JavaScript
+        var isAuthenticated = "{{ user.is_authenticated|yesno:'true,false' }}" === "true";
+    
+        document.getElementById("get-started-btn").addEventListener("click", function() {
+            if (isAuthenticated) {
+                document.getElementById("scrape-form").style.display = "block";
+                this.style.display = "none"; // Hide button after clicking
+            } else {
+                alert("Please log in to access this feature.");
+                window.location.href = "{% url 'login' %}"; // Redirect to login page
+            }
+        });
+    </script>
+    
     <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
 </body>
 </html>

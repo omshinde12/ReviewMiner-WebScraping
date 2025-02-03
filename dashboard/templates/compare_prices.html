@@ -1,50 +1,188 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReviewMiner WebScraping</title>
+    <title>ReviewMiner WebScraping - Dashboard</title>
     {% load static %}
-     <link rel="stylesheet" href="{% static 'css/page.css' %}">
+    <link rel="stylesheet" href="{% static 'css/page.css' %}">
     <!-- Add Bootstrap CSS -->
-    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     {% include 'navbar.html' %}
+    <style>
+        /* General Background Image */
+        body {
+            background-image: url("{% static 'images/background.jpg' %}"); /* Ensure the path is correct */
+            background-size: cover; /* Ensures the image covers the entire screen */
+            background-position: center; /* Keeps the background centered */
+            background-attachment: fixed; /* Keeps the image in place when scrolling */
+            height: 100vh; /* Full height of the screen */
+            margin: 0;
+            padding: 0;
+            background-color: rgba(226, 226, 226, 0.822); /* Semi-transparent overlay */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Additional styling for the dashboard */
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 20px;
+            /* background-color: rgba(255, 255, 255, 0.8); Semi-transparent white background */
+            border-radius: 10px;
+            margin-top: 50px;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .dashboard-header p {
+            font-size: 1.2rem;
+            color: #555;
+        }
+
+        .form-section {
+            width: 100%;
+            max-width: 600px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            font-size: 1.8rem;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-container h3 {
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .footer a {
+            color: #28a745;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content h1 {
+                font-size: 2rem;
+            }
+
+            .form-section {
+                max-width: 100%;
+                padding: 20px;
+            }
+
+            .table-container {
+                max-width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    
-<form method="POST" action="{% url 'compare_prices' %}" class="mb-4">
-    {% csrf_token %}
-    <div class="mb-3">
-        <label for="product_name" class="form-label">Enter Product Name:</label>
-        <input type="text" name="product_name" class="form-control" required>
+
+<div class="dashboard-container">
+
+    <!-- Header Section -->
+    <div class="dashboard-header">
+        <h1>Welcome to ReviewMiner Dashboard</h1>
+        <p>Scrape, Compare, and Analyze Product Reviews Efficiently</p>
     </div>
-    <button type="submit" class="btn btn-secondary">Compare Prices</button>
-</form>
 
-{% if product_name %}
-    <h2>Price Comparison for "{{ product_name }}"</h2>
+    <!-- Form Section to Enter Product Name -->
+    <div class="form-section">
+        <h2>Compare Prices of a Product</h2>
+        <form method="POST" action="{% url 'compare_prices' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="product_name" class="form-label">Enter Product Name:</label>
+                <input type="text" name="product_name" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Compare Prices</button>
+        </form>
+    </div>
 
-    {% if prices %}
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Website</th>
-                    <th>Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for site, price in prices.items %}
-                <tr>
-                    <td>{{ site }}</td>
-                    <td>{{ price }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <!-- Price Comparison Table -->
+    {% if product_name %}
+        <div class="table-container">
+            <h3>Price Comparison for "{{ product_name }}"</h3>
+            
+            {% if prices %}
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Website</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for site, price in prices.items %}
+                            <tr>
+                                <td>{{ site }}</td>
+                                <td>{{ price }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No prices found for "{{ product_name }}".</p>
+            {% endif %}
+        </div>
     {% else %}
-        <p>No prices found for "{{ product_name }}".</p>
+        <p>Please enter a product name to compare prices.</p>
     {% endif %}
-{% else %}
-    <p>Please enter a product name to compare prices.</p>
-{% endif %}
+    
+</div>
+
+<!-- Footer Section -->
+<footer class="footer">
+    <p>&copy; 2025 E-xpert Solutions. All rights reserved. <br>
+        <a href="/about">About Us</a> | <a href="/contact">Contact</a> | <a href="/privacy-policy">Privacy Policy</a>
+    </p>
+    <div>
+        <p><strong>Contact Us:</strong></p>
+        <p>Email: <a href="mailto:omshinde120@gmail.com">omshinde120@gmail.com</a></p>
+        <p>Phone: <a href="tel:+917058416137">7058416137</a></p>
+        <p>Address: 204, Sankalp Building, Above Monginis Shop, Near Apple Hospital, Vishal Nagar, Pimple Nilakh, Pin: 411027</p>
+    </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
