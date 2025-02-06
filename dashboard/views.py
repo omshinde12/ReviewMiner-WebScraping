@@ -25,6 +25,10 @@ from .models import ProductReview
 #     UserActivity.objects.create(user=user, action=action)
 
 def dashboard_view(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "You must be logged in to scrape reviews.")
+        return redirect('login')
+
     data_preview = None
     graphs = {}
 
@@ -59,14 +63,29 @@ def dashboard_view(request):
                     location = container.find("p", class_="MztJPv")
                     location = location.get_text(strip=True) if location else "Unknown"
 
-                    # Save each review only if it does not exist
-                    if not ProductReview.objects.filter(product_name=product_name, review_text=review_text).exists():
-                        ProductReview.objects.create(
-                            product_name=product_name,
-                            review_text=review_text,
-                            rating=rating,
-                            location=location,
-                        )
+                    # Debugging - Print extracted data
+                    print(f"Scraped Data - Product: {product_name}, Review: {review_text}, Rating: {rating}, Location: {location}, User: {request.user}")
+
+                    # Ensure user is authenticated before saving
+                    if request.user.is_authenticated:
+                        # Check if review already exists before saving
+                       if not ProductReview.objects.filter(user=request.user, product_name=product_name, review_text=review_text).exists():
+                            print(f"Attempting to save - Product: {product_name}, Review: {review_text}, Rating: {rating}, Location: {location}, User: {request.user}")
+
+                            try:
+                                review = ProductReview.objects.create(
+                                    user=request.user,
+                                    product_name=product_name,
+                                    review_text=review_text,
+                                    rating=rating,
+                                    location=location
+                                )
+                                print(f"✅ Successfully saved review: {review}")
+                            except Exception as e:
+                                print(f"❌ Error saving review: {e}")
+                    else:
+                            print("⚠ Review already exists. Skipping duplicate entry.")
+
 
                     reviews.append(review_text)
                     ratings.append(rating)
@@ -74,10 +93,10 @@ def dashboard_view(request):
 
         except Exception as e:
             print("Error during scraping:", e)
-
         finally:
             driver.quit()
 
+        # Save data to CSV for analysis
         df = pd.DataFrame({
             "Review Text": reviews,
             "Rating": ratings,
@@ -87,11 +106,10 @@ def dashboard_view(request):
         if not df.empty:
             csv_path = "dashboard/static/preprocessed_data.csv"
             df.to_csv(csv_path, index=False, encoding="utf-8")
-            print("CSV saved successfully!")
         else:
-            print("DataFrame is empty! No data to save.")
             return render(request, "dashboard.html", {"error": "No reviews found."})
 
+        # Generate graphs and perform sentiment analysis
         graphs = create_graphs(df)
         sentiment_report = perform_sentiment_analysis(df)
         data_preview = df.head().to_html(classes="table table-striped", index=False)
@@ -104,6 +122,7 @@ def dashboard_view(request):
         })
 
     return render(request, "dashboard.html", {"data": data_preview})
+
 
 def create_graphs(df):
     graph_paths = {}
@@ -286,5 +305,9 @@ def logout_view(request):
 
 
 def reviews_list(request):
-    reviews = ProductReview.objects.all()  # Fetch all reviews from the database
+    if not request.user.is_authenticated:
+        messages.error(request, "You must be logged in to view reviews.")
+        return redirect('login')
+
+    reviews = ProductReview.objects.filter(user=request.user)  # Show only logged-in user's reviews
     return render(request, 'reviews_list.html', {'reviews': reviews})

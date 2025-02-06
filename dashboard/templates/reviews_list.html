@@ -7,13 +7,13 @@
 </head>
 <body>
     <h1>Product Reviews</h1>
+    {% if reviews %}
     <table>
         <tr>
-            <th>Product Name</th>
-            <th>Review Text</th>
+            <th>Product</th>
+            <th>Review</th>
             <th>Rating</th>
             <th>Location</th>
-           
         </tr>
         {% for review in reviews %}
         <tr>
@@ -21,9 +21,11 @@
             <td>{{ review.review_text }}</td>
             <td>{{ review.rating }}</td>
             <td>{{ review.location }}</td>
-            
         </tr>
         {% endfor %}
     </table>
-</body>
+{% else %}
+    <p>No reviews found.</p>
+{% endif %}
+
 </html>
