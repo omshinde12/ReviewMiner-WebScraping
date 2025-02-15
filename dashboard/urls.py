@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import dashboard_view, download_csv_view, download_image_view
+from .views import dashboard_view, download_csv_view, download_image_view,download_all_graphs
 from . import views
 
 urlpatterns = [
@@ -11,4 +11,5 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('reviews_list/',views.reviews_list,name='reviews_list'),
+     path('download_graphs/', views.download_all_graphs, name='download_graphs'),
 ]

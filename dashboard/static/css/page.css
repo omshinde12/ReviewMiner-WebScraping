@@ -32,14 +32,14 @@ form .form-control {
     font-size: 1rem;
 }
 
-form .btn {
+/* form .btn {
     width: 100%;
     padding: 10px;
     font-size: 1rem;
     font-weight: bold;
     border-radius: 5px;
     transition: all 0.3s ease-in-out;
-}
+} */
 
 form .btn:hover {
     background-color: #0056b3;

@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ReviewMiner WebScraping - Dashboard</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/page.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'css/page.css' %}"> -->
     <!-- Add Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet"> -->
     {% include 'navbar.html' %}
+   
     <style>
         /* General Background Image */
         body {
-            background-image: url("{% static 'images/background.jpg' %}"); /* Ensure the path is correct */
+            background-image: url("{% static 'images/background1.jpg' %}"); /* Ensure the path is correct */
             background-size: cover; /* Ensures the image covers the entire screen */
             background-position: center; /* Keeps the background centered */
             background-attachment: fixed; /* Keeps the image in place when scrolling */
@@ -81,7 +82,7 @@
             margin-bottom: 20px;
         }
 
-        .footer {
+        /* .footer {
             background-color: #333;
             color: white;
             padding: 20px;
@@ -96,7 +97,7 @@
 
         .footer a:hover {
             text-decoration: underline;
-        }
+        } */
 
         /* Responsive Design */
         @media (max-width: 768px) {
@@ -168,21 +169,14 @@
         <p>Please enter a product name to compare prices.</p>
     {% endif %}
     
+    
 </div>
 
 <!-- Footer Section -->
-<footer class="footer">
-    <p>&copy; 2025 E-xpert Solutions. All rights reserved. <br>
-        <a href="/about">About Us</a> | <a href="/contact">Contact</a> | <a href="/privacy-policy">Privacy Policy</a>
-    </p>
-    <div>
-        <p><strong>Contact Us:</strong></p>
-        <p>Email: <a href="mailto:omshinde120@gmail.com">omshinde120@gmail.com</a></p>
-        <p>Phone: <a href="tel:+917058416137">7058416137</a></p>
-        <p>Address: 204, Sankalp Building, Above Monginis Shop, Near Apple Hospital, Vishal Nagar, Pimple Nilakh, Pin: 411027</p>
-    </div>
-</footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script> -->
+
+
 </body>
+
 </html>

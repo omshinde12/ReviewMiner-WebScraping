@@ -4,8 +4,10 @@
     <title>ReviewMiner WebScraping</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     {% include 'navbar.html' %}
+   
     <style>
         /* Hide the form initially */
         #scrape-form {
@@ -16,7 +18,7 @@
     <style>
         /* General Background Image */
         body {
-            background-image: url("{% static 'images/background.jpg' %}"); /* Update path as needed */
+            background-image: url("{% static 'images/background1.jpg' %}"); 
             background-size: cover; /* Ensures the image covers the entire screen */
             background-position: center; /* Keeps the background centered */
             background-attachment: fixed; /* Keeps the image in place when scrolling */
@@ -159,8 +161,8 @@
 
         /* Footer Styles */
         footer {
-            background-color: #333;
-            color: white;
+            /* background-color: #333; */
+            color:  #007bff;
             text-align: center;
             padding: 20px;
             position: relative;
@@ -235,7 +237,52 @@
         {% endif %}
     </div>
 
-    <footer>
+    
+
+    <section class="services" id="services">
+        <link rel="stylesheet" href="{% static 'css/services.css' %}">
+
+        <h1 class="heading"> Our <span>Services</span> </h1>
+    
+        <div class="box-container">
+    
+            <div class="box">
+                <i class="fas fa-database"></i>
+                <h3>Data Processing</h3>
+                <p>Efficiently clean, format, and process large datasets for better insights and decision-making.</p>
+                <a href="#" class="btn"> Read More</a>
+            </div>
+    
+            <div class="box">
+                <i class="fas fa-search"></i>
+                <h3>Web Scraping</h3>
+                <p>Extract valuable data from websites using advanced web scraping techniques.</p>
+                <a href="#" class="btn"> Read More</a>
+            </div>
+    
+            <div class="box">
+                <i class="fas fa-chart-line"></i>
+                <h3>Data Analysis</h3>
+                <p>Analyze structured and unstructured data to derive meaningful insights.</p>
+                <a href="#" class="btn"> Read More</a>
+            </div>
+    
+            <div class="box">
+                <i class="fas fa-chart-pie"></i>
+                <h3>Data Visualization</h3>
+                <p>Create interactive charts, graphs, and dashboards to present data in an understandable way.</p>
+                <a href="#" class="btn"> Read More</a>
+            </div>
+    
+        </div>
+    
+    </section>
+    
+
+    
+    
+
+    <!-- <footer>
         <p>&copy; 2025 E-xpert Solutions. All rights reserved. <br>
             <a href="https://e-xpertsol.com/">About Us</a> | <a href="/contact">Contact</a> | <a href="/privacy-policy">Privacy Policy</a>
         </p>
@@ -245,7 +292,7 @@
             <p>Phone: <a href="tel:+917058416137">7058416137</a></p>
             <p>Address: 204, Sankalp Building, Above Monginis Shop, Near Apple Hospital, Vishal Nagar, Pimple Nilakh, Pin: 411027</p>
         </div>
-    </footer>
+    </footer> -->
 
     <script>
         // Correctly pass Django authentication status to JavaScript
@@ -261,6 +308,7 @@
             }
         });
     </script>
+     {% include 'footer.html' %}
     
     <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
 </body>

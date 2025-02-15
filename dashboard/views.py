@@ -16,6 +16,11 @@ from django.contrib import messages
 from .utils import fetch_prices
 from django.conf import settings
 from .models import ProductReview
+import os
+import zipfile
+
+
+from django.shortcuts import get_object_or_404
 
 
 # from django.contrib.auth.decorators import login_required
@@ -31,6 +36,7 @@ def dashboard_view(request):
 
     data_preview = None
     graphs = {}
+    scraped_data_available = False  # Flag to track data availability
 
     if request.method == "POST":
         flipkart_url = request.POST.get("flipkart_url")
@@ -63,29 +69,18 @@ def dashboard_view(request):
                     location = container.find("p", class_="MztJPv")
                     location = location.get_text(strip=True) if location else "Unknown"
 
-                    # Debugging - Print extracted data
-                    print(f"Scraped Data - Product: {product_name}, Review: {review_text}, Rating: {rating}, Location: {location}, User: {request.user}")
-
-                    # Ensure user is authenticated before saving
                     if request.user.is_authenticated:
-                        # Check if review already exists before saving
-                       if not ProductReview.objects.filter(user=request.user, product_name=product_name, review_text=review_text).exists():
-                            print(f"Attempting to save - Product: {product_name}, Review: {review_text}, Rating: {rating}, Location: {location}, User: {request.user}")
-
+                        if not ProductReview.objects.filter(user=request.user, product_name=product_name, review_text=review_text).exists():
                             try:
-                                review = ProductReview.objects.create(
+                                ProductReview.objects.create(
                                     user=request.user,
                                     product_name=product_name,
                                     review_text=review_text,
                                     rating=rating,
                                     location=location
                                 )
-                                print(f"✅ Successfully saved review: {review}")
                             except Exception as e:
-                                print(f"❌ Error saving review: {e}")
-                    else:
-                            print("⚠ Review already exists. Skipping duplicate entry.")
-
+                                print(f"Error saving review: {e}")
 
                     reviews.append(review_text)
                     ratings.append(rating)
@@ -96,20 +91,15 @@ def dashboard_view(request):
         finally:
             driver.quit()
 
-        # Save data to CSV for analysis
-        df = pd.DataFrame({
-            "Review Text": reviews,
-            "Rating": ratings,
-            "Location": locations,
-        })
+        df = pd.DataFrame({"Review Text": reviews, "Rating": ratings, "Location": locations})
 
         if not df.empty:
             csv_path = "dashboard/static/preprocessed_data.csv"
             df.to_csv(csv_path, index=False, encoding="utf-8")
+            scraped_data_available = True  # Set flag to True when data is available
         else:
             return render(request, "dashboard.html", {"error": "No reviews found."})
 
-        # Generate graphs and perform sentiment analysis
         graphs = create_graphs(df)
         sentiment_report = perform_sentiment_analysis(df)
         data_preview = df.head().to_html(classes="table table-striped", index=False)
@@ -118,10 +108,11 @@ def dashboard_view(request):
             "data": data_preview,
             "graphs": graphs,
             "sentiment_report": sentiment_report,
-            "MEDIA_URL": settings.MEDIA_URL
+            "MEDIA_URL": settings.MEDIA_URL,
+            "scraped_data_available": scraped_data_available  # Pass flag to template
         })
 
-    return render(request, "dashboard.html", {"data": data_preview})
+    return render(request, "dashboard.html", {"data": data_preview, "scraped_data_available": scraped_data_available})
 
 
 def create_graphs(df):
@@ -256,12 +247,20 @@ def download_csv_view(request):
             return response
     return HttpResponse("File not found", status=404)
 
+import os
+from django.http import FileResponse, HttpResponse
+from django.conf import settings
+
 def download_image_view(request, filename):
-    file_path = os.path.join("dashboard/static", filename)
+    # Get the absolute path of the static folder
+    static_path = os.path.join(settings.BASE_DIR, "dashboard/static")
+    file_path = os.path.join(static_path, filename)
+
     if os.path.exists(file_path):
-        with open(file_path, "rb") as f:
-            return FileResponse(f, content_type="image/png")
+        return FileResponse(open(file_path, "rb"), content_type="image/png")
+
     return HttpResponse("File not found", status=404)
+
 
 def register_view(request):
     if request.method == 'POST':
@@ -311,3 +310,22 @@ def reviews_list(request):
 
     reviews = ProductReview.objects.filter(user=request.user)  # Show only logged-in user's reviews
     return render(request, 'reviews_list.html', {'reviews': reviews})
+
+def download_all_graphs(request):
+    static_path = os.path.join(settings.BASE_DIR, "dashboard/static")
+    graph_files = ["wordcloud.png", "ratings_distribution.png", "sentiment_distribution.png","avg_rating_by_location.png"]  # Add all graph filenames
+
+    zip_filename = "graphs.zip"
+    zip_path = os.path.join(static_path, zip_filename)
+
+    # Create ZIP file
+    with zipfile.ZipFile(zip_path, "w") as zipf:
+        for graph in graph_files:
+            graph_path = os.path.join(static_path, graph)
+            if os.path.exists(graph_path):
+                zipf.write(graph_path, graph)
+
+    if os.path.exists(zip_path):
+        return FileResponse(open(zip_path, "rb"), content_type="application/zip", as_attachment=True, filename=zip_filename)
+
+    return HttpResponse("Graphs not found", status=404)
