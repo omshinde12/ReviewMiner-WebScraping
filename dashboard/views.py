@@ -61,6 +61,7 @@ def dashboard_view(request):
                 for container in review_containers:
                     review_text = container.find("div", class_="ZmyHeo")
                     review_text = review_text.get_text(strip=True) if review_text else "N/A"
+                    review_text = review_text.replace("READ MORE", "").strip()
 
                     rating = container.find("div", class_="XQDdHH Ga3i8K")
                     rating = rating.get_text(strip=True) if rating else "0.0"
@@ -68,6 +69,7 @@ def dashboard_view(request):
 
                     location = container.find("p", class_="MztJPv")
                     location = location.get_text(strip=True) if location else "Unknown"
+                    location = location.replace("Certified Buyer, ", "").strip()
 
                     if request.user.is_authenticated:
                         if not ProductReview.objects.filter(user=request.user, product_name=product_name, review_text=review_text).exists():
@@ -91,7 +93,7 @@ def dashboard_view(request):
         finally:
             driver.quit()
 
-        df = pd.DataFrame({"Review Text": reviews, "Rating": ratings, "Location": locations})
+        df = pd.DataFrame({"Product_name": product_name,"Review Text": reviews, "Rating": ratings, "Location": locations})
 
         if not df.empty:
             csv_path = "dashboard/static/preprocessed_data.csv"
